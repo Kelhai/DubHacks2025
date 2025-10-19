@@ -5,6 +5,8 @@
 /build/*
 !/build/.gitkeep
 
+.env
+
 # Go modules
 /go.sum
 /go.mod
