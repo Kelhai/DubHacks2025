@@ -1,1 +1,73 @@
+/* ... existing styles ... */
 
+/* Error state */
+.app-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--gray-50);
+}
+
+.app-error-content {
+    text-align: center;
+}
+
+.app-error-content > * + * {
+    margin-top: 1rem;
+}
+
+.app-error-title {
+    color: var(--red-500);
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.app-error-message {
+    color: var(--gray-600);
+}
+
+.app-error-button {
+    padding: 0.5rem 1rem;
+    background-color: var(--purple-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.app-error-button:hover {
+    background-color: var(--purple-700);
+}
+
+/* Loading state */
+.app-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: var(--gray-50);
+}
+
+.app-loading-content {
+    text-align: center;
+}
+
+.app-loading-content > * + * {
+    margin-top: 1rem;
+}
+
+.app-loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid var(--purple-600);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+.app-loading-text {
+    color: var(--gray-600);
+}

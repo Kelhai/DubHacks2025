@@ -1,0 +1,76 @@
+.message-list {
+    padding: 2rem 1.5rem;
+    width: 100%;
+    max-width: 56rem; /* Increased from default, about 896px */
+    margin: 0 auto;
+}
+
+.message-list > * + * {
+    margin-top: 1.25rem; /* Reduced from 1.5rem for tighter spacing */
+}
+
+/* Empty state */
+.message-list-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--gray-400);
+}
+
+.message-list-empty-content {
+    text-align: center;
+}
+
+.message-list-empty-title {
+    font-size: 1.125rem;
+}
+
+.message-list-empty-subtitle {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Loading indicator */
+.message-list-loading {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.message-list-loading-avatar {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--purple-500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message-list-loading-avatar-text {
+    color: white;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.message-list-loading-bubble {
+    flex: 1;
+    background-color: var(--gray-100);
+    border-radius: var(--radius);
+    padding: 1rem;
+}
+
+.message-list-loading-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.message-list-loading-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: var(--gray-400);
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}

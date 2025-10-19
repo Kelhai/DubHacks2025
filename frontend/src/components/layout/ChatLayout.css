@@ -1,0 +1,12 @@
+.chat-layout {
+    display: flex;
+    height: 100vh;
+    background-color: #e7e5e4; /* stone-200 equivalent */
+    overflow: hidden;
+}
+
+/* Ensure chat container takes remaining space */
+.chat-layout > *:last-child {
+    flex: 1;
+    min-width: 0;
+}

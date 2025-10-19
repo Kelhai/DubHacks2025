@@ -1,0 +1,125 @@
+.message-input-container {
+    padding: 1.25rem 1.5rem;
+    width: 100%;
+    max-width: 56rem; /* Matches message list max-width */
+    margin: 0 auto;
+}
+
+.message-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.875rem;
+}
+
+.message-input-textarea {
+    flex: 1;
+    resize: none;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-color);
+    padding: 0.875rem 1.125rem; /* Slightly increased */
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+    max-height: 12rem; /* Increased from 10rem */
+    overflow-y: auto;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.message-input-textarea:focus {
+    outline: none;
+    border-color: var(--purple-500);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+}
+
+.message-input-textarea-disabled {
+    background-color: var(--gray-100);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.message-input-button {
+    flex-shrink: 0;
+    background-color: var(--purple-600);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.875rem 1.125rem; /* Slightly increased */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.25rem; /* Slightly increased */
+    min-height: 3.25rem; /* Slightly increased */
+}
+
+.message-input-button:hover:not(:disabled) {
+    background-color: var(--purple-700);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.message-input-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.message-input-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+}
+
+.message-input-button-disabled {
+    background-color: var(--gray-300);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.message-input-button-disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.message-input-icon {
+    width: 1.375rem; /* Slightly increased */
+    height: 1.375rem; /* Slightly increased */
+}
+
+.message-input-spinner {
+    width: 1.375rem;
+    height: 1.375rem;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.message-input-hint {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Scrollbar for textarea */
+.message-input-textarea::-webkit-scrollbar {
+    width: 6px;
+}
+
+.message-input-textarea::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.message-input-textarea::-webkit-scrollbar-thumb {
+    background-color: var(--gray-300);
+    border-radius: 3px;
+}
+
+.message-input-textarea::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gray-400);
+}

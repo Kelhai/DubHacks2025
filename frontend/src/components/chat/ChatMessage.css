@@ -1,0 +1,121 @@
+/* Message container */
+.chat-message {
+    display: flex;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.chat-message-user {
+    justify-content: flex-end;
+}
+
+.chat-message-assistant {
+    justify-content: flex-start;
+}
+
+/* Message bubble */
+.chat-message-bubble {
+    max-width: 70%;
+    padding: 1rem;
+    border-radius: 1rem;
+    border: 2px solid;
+    box-shadow: var(--shadow-md);
+    position: relative;
+}
+
+.chat-message-bubble-user {
+    background: linear-gradient(to bottom right, #fef3c7, #fffbeb);
+    border-color: #fde68a;
+    border-bottom-right-radius: 0;
+}
+
+.chat-message-bubble-assistant {
+    background-color: white;
+    border-color: #e7e5e4;
+    border-bottom-left-radius: 0;
+}
+
+/* Role badge */
+.chat-message-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chat-message-badge-user {
+    color: #b45309;
+}
+
+.chat-message-badge-assistant {
+    color: #57534e;
+}
+
+.chat-message-emoji {
+    font-size: 1rem;
+}
+
+/* Message content */
+.chat-message-content {
+    line-height: 1.625;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.chat-message-content-user {
+    color: #292524;
+}
+
+.chat-message-content-assistant {
+    color: #44403c;
+}
+
+/* Timestamp */
+.chat-message-timestamp {
+    font-size: 0.75rem;
+    color: #a8a29e;
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.chat-message-timestamp-icon {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+/* Paper corner fold effect */
+.chat-message-corner {
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
+    bottom: 0;
+}
+
+.chat-message-corner-user {
+    right: 0;
+    background-color: #fde68a;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.chat-message-corner-assistant {
+    left: 0;
+    background-color: #e7e5e4;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
