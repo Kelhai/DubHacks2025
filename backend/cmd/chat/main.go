@@ -24,7 +24,6 @@ var (
 	dynamoClient  *dynamodb.Client
 	tableName     string
 	bedrockClient *bedrockagentruntime.Client
-	modelID       string
 )
 
 type Message struct {
@@ -49,7 +48,6 @@ func init() {
 	bedrockClient = bedrockagentruntime.NewFromConfig(cfg)
 
 	tableName = os.Getenv("CHATS_TABLE")
-	modelID = os.Getenv("NOVA_AGENT_ID") // Set this in Lambda env variables
 }
 
 func callNovaAgent(input string) (string, error) {
@@ -72,7 +70,7 @@ func callNovaAgent(input string) (string, error) {
 	eventsChan := resp.GetStream().Events()
 	output := ""
 
-	timeout := time.After(2 * time.Second)
+	timeout := time.After(5 * time.Second)
 
 	for {
 		select {

@@ -42,9 +42,8 @@ resource "aws_lambda_function" "tau" {
     variables = {
       USER_CHATS_TABLE = aws_dynamodb_table.user_chats.name
       CHATS_TABLE      = aws_dynamodb_table.chats.name
-      BEDROCK_AGENT_ID = "MSP5FBOK9V"
-      BEDROCK_AGENT_ALIAS = "XM1CVQG0VF"
-      NOVA_AGENT_ID    = "MSP5FBOK9V"
+      BEDROCK_AGENT_ID = "3IS4TGAPXY"
+      BEDROCK_AGENT_ALIAS = "IZOF7ATCOP"
     }
   }
 }
