@@ -13,3 +13,9 @@ output "frontend_cloudfront_url" {
   value       = aws_cloudfront_distribution.frontend.domain_name
 }
 
+# Output the API URL
+output "api_url" {
+  value       = aws_apigatewayv2_stage.default.invoke_url
+  description = "Base URL for the API Gateway"
+}
+

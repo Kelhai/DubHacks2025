@@ -9,14 +9,17 @@ fi
 OUT_DIR="build"
 mkdir -p "$OUT_DIR"
 
+# -------------------
 # Build backend Lambdas
+# -------------------
 for dir in backend/cmd/*; do
   if [ -d "$dir" ]; then
     name=$(basename "$dir")
     echo "Building Lambda: $name"
 
     cd backend
-    GOOS=linux GOARCH=amd64 go build -o "../$OUT_DIR/bootstrap" "./cmd/$name"
+    GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o "../$OUT_DIR/bootstrap" "./cmd/$name"
+
     cd ..
 
     (cd "$OUT_DIR" && zip -j "${name}.zip" bootstrap)
@@ -24,21 +27,31 @@ for dir in backend/cmd/*; do
   fi
 done
 
-# Optional frontend build & deploy
+# -------------------
+# Optional frontend build
+# -------------------
 if [ "$BUILD_FRONTEND" = true ]; then
   echo "Building frontend..."
+
+  # Get the API Gateway URL from Terraform
+  API_URL=$(terraform -chdir=infra output -raw api_url)
+  echo "Using API URL: $API_URL"
+
   cd frontend
 
-  # Install dependencies if missing
-  npm install
+  # Create a .env file for Vite
+  echo "VITE_API_BASE=$API_URL" > .env.local
+  
+  rm -rf dist/
 
-  # Build into dist/
+  npm ci
   npm run build
 
-  # Upload to S3 (CloudFront will serve from the bucket)
-  aws s3 sync dist/ s3://tau-frontend/ --delete
+  # Upload to S3
+  aws s3 sync dist/ s3://tau-frontend/
 
   cd ..
 fi
+
 echo "✅ Build complete"
 
