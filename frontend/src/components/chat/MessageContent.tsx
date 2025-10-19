@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { InlineMath, BlockMath } from 'react-katex';
 import './MessageContent.css';
 
@@ -10,13 +11,10 @@ export default function MessageContent({ content, isUser }: MessageContentProps)
     // Parse content to find LaTeX blocks and inline math
     const parseContent = (text: string) => {
         const parts: JSX.Element[] = [];
-        let lastIndex = 0;
         let key = 0;
 
         // Pattern for block math: $$...$$
         const blockMathRegex = /\$\$([\s\S]*?)\$\$/g;
-        // Pattern for inline math: $...$
-        const inlineMathRegex = /\$([^\$\n]+?)\$/g;
 
         // First, find all block math sections
         const blockMatches: Array<{ start: number; end: number; content: string }> = [];

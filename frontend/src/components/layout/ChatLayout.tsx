@@ -38,7 +38,7 @@ export default function ChatLayout({
             <ChatContainer
                 activeChat={activeChat}
                 onSendMessage={onSendMessage}
-                isSending={isSending}
+                isSending={isSending || isLoadingMessages}
             />
         </div>
     );
