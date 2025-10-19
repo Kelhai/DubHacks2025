@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -12,14 +13,18 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
+	"github.com/aws/aws-sdk-go-v2/service/bedrockagentruntime"
+	btypes "github.com/aws/aws-sdk-go-v2/service/bedrockagentruntime/types"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 )
 
 var (
-	dynamoClient *dynamodb.Client
-	tableName    string
+	dynamoClient  *dynamodb.Client
+	tableName     string
+	bedrockClient *bedrockagentruntime.Client
+	modelID       string
 )
 
 type Message struct {
@@ -27,7 +32,6 @@ type Message struct {
 	Content string `json:"content"`
 }
 
-// Dynamo item
 type ChatItem struct {
 	ChatID    string `dynamodbav:"chat_id"`
 	Timestamp int64  `dynamodbav:"timestamp"`
@@ -38,10 +42,61 @@ type ChatItem struct {
 func init() {
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {
-		panic(fmt.Sprintf("unable to load SDK config, %v", err))
+		panic(fmt.Sprintf("unable to load SDK config: %v", err))
 	}
+
 	dynamoClient = dynamodb.NewFromConfig(cfg)
+	bedrockClient = bedrockagentruntime.NewFromConfig(cfg)
+
 	tableName = os.Getenv("CHATS_TABLE")
+	modelID = os.Getenv("NOVA_AGENT_ID") // Set this in Lambda env variables
+}
+
+func callNovaAgent(input string) (string, error) {
+	agentID := os.Getenv("BEDROCK_AGENT_ID")
+	agentAliasID := os.Getenv("BEDROCK_AGENT_ALIAS")
+	sessionID := fmt.Sprintf("chat-%d", time.Now().Unix())
+
+	req := &bedrockagentruntime.InvokeAgentInput{
+		AgentId:      aws.String(agentID),
+		AgentAliasId: aws.String(agentAliasID),
+		SessionId:    aws.String(sessionID),
+		InputText:    &input,
+	}
+
+	resp, err := bedrockClient.InvokeAgent(context.TODO(), req)
+	if err != nil {
+		return "", err
+	}
+
+	eventsChan := resp.GetStream().Events()
+	output := ""
+
+	timeout := time.After(2 * time.Second)
+
+	for {
+		select {
+		case ev, ok := <-eventsChan:
+			if !ok {
+				// channel closed
+				return output, nil
+			}
+			switch e := ev.(type) {
+			case *btypes.ResponseStreamMemberChunk:
+				output += string(e.Value.Bytes)
+			case *btypes.ResponseStreamMemberFiles:
+				output += "file: " + *e.Value.Files[0].Name
+			case *btypes.ResponseStreamMemberReturnControl:
+				output += "return control: " + *e.Value.InvocationId
+			default:
+				output += "error"
+			}
+
+		case <-timeout:
+			output = strings.ReplaceAll(output, "\"", "")
+			return output, nil // return whatever has been received so far
+		}
+	}
 }
 
 func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
@@ -56,14 +111,13 @@ func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
 			return events.APIGatewayV2HTTPResponse{StatusCode: 400}, err
 		}
 
-		// User message
+		// Store user message in DynamoDB
 		userItem := ChatItem{
 			ChatID:    chatID,
 			Timestamp: time.Now().Unix(),
 			Role:      "user",
 			Content:   body.Message,
 		}
-
 		av, _ := attributevalue.MarshalMap(userItem)
 		_, err := dynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
 			TableName: aws.String(tableName),
@@ -73,14 +127,19 @@ func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
 			return events.APIGatewayV2HTTPResponse{StatusCode: 500}, err
 		}
 
-		// Automated assistant reply
+		// Call Bedrock model
+		assistantContent, err := callNovaAgent(body.Message)
+		if err != nil {
+			return events.APIGatewayV2HTTPResponse{StatusCode: 500}, err
+		}
+
+		// Store assistant response in DynamoDB
 		assistantItem := ChatItem{
 			ChatID:    chatID,
 			Timestamp: time.Now().Unix() + 1,
 			Role:      "assistant",
-			Content:   "This is an automated response.",
+			Content:   assistantContent,
 		}
-
 		av2, _ := attributevalue.MarshalMap(assistantItem)
 		_, err = dynamoClient.PutItem(ctx, &dynamodb.PutItemInput{
 			TableName: aws.String(tableName),
@@ -96,10 +155,11 @@ func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
 				"Content-Type":                "application/json",
 				"Access-Control-Allow-Origin": "*",
 			},
-			Body: fmt.Sprintf(`{"message": "%s"}`, assistantItem.Content),
+			Body: fmt.Sprintf(`{"message": "%s"}`, assistantContent),
 		}, nil
 
 	case "GET":
+		// Fetch all messages for chatID
 		out, err := dynamoClient.Query(ctx, &dynamodb.QueryInput{
 			TableName:              aws.String(tableName),
 			KeyConditionExpression: aws.String("chat_id = :c"),
@@ -137,19 +197,25 @@ func handler(ctx context.Context, req events.APIGatewayV2HTTPRequest) (events.AP
 			},
 			Body: string(body),
 		}, nil
-
 	case "OPTIONS":
 		return events.APIGatewayV2HTTPResponse{
 			StatusCode: 200,
 			Headers: map[string]string{
 				"Access-Control-Allow-Origin":  "*",
-				"Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+				"Access-Control-Allow-Methods": "OPTIONS,GET,POST",
 				"Access-Control-Allow-Headers": "*",
 			},
 		}, nil
 
 	default:
-		return events.APIGatewayV2HTTPResponse{StatusCode: 405}, nil
+		return events.APIGatewayV2HTTPResponse{
+			StatusCode: 405,
+			Headers: map[string]string{
+				"Access-Control-Allow-Origin":  "*",
+				"Access-Control-Allow-Methods": "OPTIONS,GET,POST",
+				"Access-Control-Allow-Headers": "*",
+			},
+		}, nil
 	}
 }
 

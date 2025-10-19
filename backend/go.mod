@@ -7,10 +7,12 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.39.3
 	github.com/aws/aws-sdk-go-v2/config v1.31.13
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.20.15
+	github.com/aws/aws-sdk-go-v2/service/bedrockagentruntime v1.50.1
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.51.1
 )
 
 require (
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.2 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.17 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.10 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.10 // indirect

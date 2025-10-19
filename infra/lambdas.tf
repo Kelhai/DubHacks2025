@@ -42,6 +42,9 @@ resource "aws_lambda_function" "tau" {
     variables = {
       USER_CHATS_TABLE = aws_dynamodb_table.user_chats.name
       CHATS_TABLE      = aws_dynamodb_table.chats.name
+      BEDROCK_AGENT_ID = "MSP5FBOK9V"
+      BEDROCK_AGENT_ALIAS = "XM1CVQG0VF"
+      NOVA_AGENT_ID    = "MSP5FBOK9V"
     }
   }
 }
@@ -96,5 +99,23 @@ resource "aws_lambda_permission" "api_gateway" {
   function_name = each.value.function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_apigatewayv2_api.api.execution_arn}/*/*"
+}
+
+resource "aws_iam_role_policy" "lambda_bedrock" {
+  name = "${var.project_name}-lambda-bedrock"
+  role = aws_iam_role.lambda_exec.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "bedrock:InvokeAgent"
+        ],
+        Resource = "arn:aws:bedrock:us-east-2:205930618404:agent-alias/*"
+      }
+    ]
+  })
 }
 
