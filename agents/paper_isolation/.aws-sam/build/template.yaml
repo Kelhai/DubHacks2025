@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Tiny Bedrock Agent (Lambda + API GW)
+Parameters:
+  ModelId:
+    Type: String
+    Default: openai.gpt-oss-120b-1:0
+Resources:
+  AgentFn:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: AgentFn
+      Handler: app.handler
+      Runtime: python3.11
+      Timeout: 20
+      Environment:
+        Variables:
+          MODEL_ID:
+            Ref: ModelId
+      Policies:
+      - Statement:
+          Effect: Allow
+          Action:
+          - bedrock:InvokeModel
+          - bedrock:InvokeModelWithResponseStream
+          Resource: '*'
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /agent
+            Method: POST
+    Metadata:
+      SamResourceId: AgentFn

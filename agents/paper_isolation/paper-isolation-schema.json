@@ -1,0 +1,52 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Paper Isolation API",
+    "version": "1.0.0",
+    "description": "API to isolate paper from images containing documents"
+  },
+  "paths": {
+    "/isolate-paper": {
+      "post": {
+        "summary": "Isolate paper from image",
+        "description": "Takes a base64 encoded image containing a piece of paper and returns an isolated image of just the paper",
+        "operationId": "isolate_paper",
+        "parameters": [
+          {
+            "name": "image_base64",
+            "in": "query",
+            "description": "Base64 encoded image containing a paper document",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully isolated paper from image",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "isolated_image_base64": {
+                      "type": "string",
+                      "description": "Base64 encoded image of isolated paper"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
