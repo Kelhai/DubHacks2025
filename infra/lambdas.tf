@@ -70,7 +70,7 @@ resource "aws_apigatewayv2_route" "routes" {
   for_each = aws_lambda_function.tau
 
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "GET /${replace(each.key, ".zip", "")}" # e.g., /hello, /bye
+  route_key = "GET /${replace(replace(each.key, ".zip", ""), "/_/", "/")}"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integ[each.key].id}"
 }
 
@@ -80,6 +80,7 @@ resource "aws_apigatewayv2_stage" "default" {
   name        = "$default"
   auto_deploy = true
 }
+
 
 # resource "aws_lambda_permission" "api_gateway" {
 #   for_each = aws_lambda_function.tau
