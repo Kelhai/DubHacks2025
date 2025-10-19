@@ -5,6 +5,8 @@
     height: 100%;
     width: 100%;
     background-color: #ffffff;
+    position: relative;
+    overflow: hidden;
 }
 
 /* Empty state */
@@ -38,6 +40,8 @@
     padding: 1.25rem 2rem;
     background-color: white;
     flex-shrink: 0;
+    position: relative;
+    z-index: 10;
 }
 
 .chat-container-header-title {
@@ -55,10 +59,12 @@
 /* Messages area */
 .chat-container-messages {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     min-height: 0;
     display: flex;
     justify-content: center;
+    position: relative;
+    padding: 0 2rem; /* Add horizontal padding here */
 }
 
 /* Input area */
@@ -68,4 +74,7 @@
     flex-shrink: 0;
     display: flex;
     justify-content: center;
+    position: relative;
+    z-index: 10;
+    padding: 0 2rem; /* Add horizontal padding here */
 }

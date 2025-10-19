@@ -29,3 +29,18 @@ export interface ChatMessagesResponse {
 export interface SendMessageResponse {
     message: string;
 }
+
+export interface Document {
+    id: string;
+    name: string;
+    uploadedAt: string;
+    size?: number;
+    thumbnailUrl?: string;
+    fileUrl?: string;
+}
+
+export interface UploadDocumentResponse {
+    success: boolean;
+    document?: Document;
+    error?: string;
+}

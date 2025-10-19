@@ -45,7 +45,7 @@ export default function Sidebar({
             {/* Header */}
             <header className="sidebar-header">
                 <div className="sidebar-header-top">
-                    <h2 className="sidebar-title">Messages</h2>
+                    <h2 className="sidebar-title">Lessons</h2>
                     <button
                         className="sidebar-new-chat-btn"
                         title="New chat"

@@ -10,9 +10,13 @@ interface MessageListProps {
 
 export default function MessageList({ messages, isSending = false }: MessageListProps) {
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        // Use the container ref to scroll, not the entire viewport
+        if (containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight;
+        }
     }, [messages, isSending]);
 
     // Filter out empty messages
@@ -30,28 +34,30 @@ export default function MessageList({ messages, isSending = false }: MessageList
     }
 
     return (
-        <div className="message-list">
-            {validMessages.map((message, index) => (
-                <Message
-                    key={`${message.role}-${index}-${message.timestamp || Date.now()}`}
-                    message={message}
-                />
-            ))}
-            {isSending && (
-                <div className="message-list-loading">
-                    <div className="message-list-loading-avatar">
-                        <span className="message-list-loading-avatar-text">AI</span>
-                    </div>
-                    <div className="message-list-loading-bubble">
-                        <div className="message-list-loading-dots">
-                            <div className="message-list-loading-dot" style={{ animationDelay: '0ms' }}></div>
-                            <div className="message-list-loading-dot" style={{ animationDelay: '150ms' }}></div>
-                            <div className="message-list-loading-dot" style={{ animationDelay: '300ms' }}></div>
+        <div className="message-list-container" ref={containerRef}>
+            <div className="message-list">
+                {validMessages.map((message, index) => (
+                    <Message
+                        key={`${message.role}-${index}-${message.timestamp || Date.now()}`}
+                        message={message}
+                    />
+                ))}
+                {isSending && (
+                    <div className="message-list-loading">
+                        <div className="message-list-loading-avatar">
+                            <span className="message-list-loading-avatar-text">AI</span>
+                        </div>
+                        <div className="message-list-loading-bubble">
+                            <div className="message-list-loading-dots">
+                                <div className="message-list-loading-dot" style={{ animationDelay: '0ms' }}></div>
+                                <div className="message-list-loading-dot" style={{ animationDelay: '150ms' }}></div>
+                                <div className="message-list-loading-dot" style={{ animationDelay: '300ms' }}></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-            <div ref={messagesEndRef} />
+                )}
+                <div ref={messagesEndRef} />
+            </div>
         </div>
     );
 }
