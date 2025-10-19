@@ -1,52 +1,50 @@
-# ===============================
-# Go build artifacts
-# ===============================
-backend/bootstrap
-backend/*.exe
-backend/*.out
-backend/*.test
+# ----------------------
+# Go / Backend
+# ----------------------
+# Binaries
+/build/*
+!/build/.gitkeep
 
-# Go modules (if vendoring)
-backend/vendor/
+# Go modules
+/go.sum
+/go.mod
 
-# ===============================
-# Lambda deployment package
-# ===============================
-backend/function.zip
-
-# ===============================
-# Environment variables
-# ===============================
-backend/.env
-backend/.env.local
-backend/.env.*.local
-
-# ===============================
-# Terraform
-# ===============================
-backend/terraform/terraform.tfstate
-backend/terraform/terraform.tfstate.backup
-backend/terraform/.terraform/
-backend/terraform/.terraform.lock.hcl
-backend/terraform/*.tfvars      # only if you have sensitive variables
-
-# ===============================
-# Logs
-# ===============================
-*.log
-
-# ===============================
-# IDE / Editor
-# ===============================
-.idea/
-*.iml
-.vscode/
+# Editor / OS
 *.swp
-*.swo
+*.DS_Store
 
-# ===============================
-# OS-specific
-# ===============================
-.DS_Store
-Thumbs.db
+# ----------------------
+# Frontend
+# ----------------------
+# Node modules
+/frontend/node_modules/
+/frontend/dist/
+
+# Build artifacts
+/frontend/dist/
+/frontend/build/
+/frontend/*.log
+
+# ----------------------
+# Terraform / Infra
+# ----------------------
+/infra/terraform.tfstate
+/infra/terraform.tfstate.backup
+/infra/.terraform/
+*.tfplan
+
+# ----------------------
+# Logs / temporary
+# ----------------------
+*.log
+*.tmp
+*.bak
+
+# ----------------------
+# IDE / Editor
+# ----------------------
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
 
